@@ -588,6 +588,196 @@ export function generateAtlasCanvas(): HTMLCanvasElement {
     }
   });
 
+  // 39: Sandstone Top/Bottom
+  drawTile(39, (c) => {
+    const rng = createRng(139);
+    for (let y = 0; y < 16; y++) {
+      for (let x = 0; x < 16; x++) {
+        const r = rng();
+        const base = Math.floor(195 + r * 30);
+        c.fillStyle = `rgb(${base + 15},${base + 5},${Math.floor(base * 0.7)})`;
+        c.fillRect(x, y, 1, 1);
+      }
+    }
+  });
+
+  // 40: Sandstone Side (stratified sedimentary rock layers)
+  drawTile(40, (c) => {
+    const rng = createRng(140);
+    for (let y = 0; y < 16; y++) {
+      const isBand = y === 3 || y === 4 || y === 11 || y === 12;
+      for (let x = 0; x < 16; x++) {
+        const r = rng();
+        let base = Math.floor(195 + r * 25);
+        if (isBand) base -= 35; // darker sedimentary layer
+        c.fillStyle = `rgb(${base + 15},${base + 5},${Math.floor(base * 0.7)})`;
+        c.fillRect(x, y, 1, 1);
+      }
+    }
+  });
+
+  // 41: Cactus Top
+  drawTile(41, (c) => {
+    c.fillStyle = '#55822e';
+    c.fillRect(0, 0, 16, 16);
+    c.fillStyle = '#3c611f';
+    c.strokeRect(1.5, 1.5, 13, 13);
+    c.fillStyle = '#6fa13d';
+    c.fillRect(6, 6, 4, 4);
+  });
+
+  // 42: Cactus Side (vertical ribs + prickly spine thorns)
+  drawTile(42, (c) => {
+    for (let y = 0; y < 16; y++) {
+      for (let x = 0; x < 16; x++) {
+        const isRib = x % 4 === 0;
+        c.fillStyle = isRib ? '#426922' : '#55822e';
+        c.fillRect(x, y, 1, 1);
+      }
+    }
+    // Prickly thorns
+    const spines = [[2, 2], [6, 5], [10, 2], [14, 6], [2, 10], [6, 13], [10, 10], [14, 14]];
+    c.fillStyle = '#1b2b0d';
+    for (const [sx, sy] of spines) {
+      c.fillRect(sx, sy, 1, 2);
+    }
+  });
+
+  // 43: Birch Log Side (white birch bark with horizontal dark lenticels)
+  drawTile(43, (c) => {
+    const rng = createRng(143);
+    for (let y = 0; y < 16; y++) {
+      for (let x = 0; x < 16; x++) {
+        const r = rng();
+        const base = Math.floor(220 + r * 25);
+        c.fillStyle = `rgb(${base},${base - 3},${base - 8})`;
+        c.fillRect(x, y, 1, 1);
+      }
+    }
+    // Dark horizontal birch bark marks
+    const marks = [
+      [2, 3, 3], [10, 4, 4], [4, 8, 5], [11, 10, 3], [1, 13, 4], [9, 14, 4]
+    ];
+    c.fillStyle = '#363430';
+    for (const [mx, my, mw] of marks) {
+      c.fillRect(mx, my, mw, 1);
+    }
+  });
+
+  // 44: Ice (translucent icy blue with crystalline reflections)
+  drawTile(44, (c) => {
+    const rng = createRng(144);
+    for (let y = 0; y < 16; y++) {
+      for (let x = 0; x < 16; x++) {
+        const r = rng();
+        const b = Math.floor(225 + r * 25);
+        c.fillStyle = `rgba(130, ${Math.floor(190 + r * 30)}, ${b}, 0.8)`;
+        c.fillRect(x, y, 1, 1);
+      }
+    }
+    // Frost crack lines
+    c.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    c.fillRect(3, 4, 4, 1);
+    c.fillRect(6, 5, 1, 4);
+    c.fillRect(10, 10, 3, 1);
+  });
+
+  // 45: Red Flower (Poppy)
+  drawTile(45, (c) => {
+    c.clearRect(0, 0, 16, 16);
+    // Green stem
+    c.fillStyle = '#4c8024';
+    c.fillRect(7, 8, 2, 8);
+    c.fillRect(5, 11, 2, 2);
+    // Red petals
+    c.fillStyle = '#d32626';
+    c.fillRect(5, 3, 6, 6);
+    c.fillStyle = '#ff4d4d';
+    c.fillRect(6, 4, 4, 4);
+    // Dark core
+    c.fillStyle = '#221111';
+    c.fillRect(7, 5, 2, 2);
+  });
+
+  // 46: Yellow Flower (Dandelion)
+  drawTile(46, (c) => {
+    c.clearRect(0, 0, 16, 16);
+    // Green stem
+    c.fillStyle = '#4c8024';
+    c.fillRect(7, 8, 2, 8);
+    // Yellow flower head
+    c.fillStyle = '#f5c818';
+    c.fillRect(5, 4, 6, 5);
+    c.fillStyle = '#ffec42';
+    c.fillRect(6, 5, 4, 3);
+  });
+
+  // 47: Bed Top (White pillow at top, red quilt)
+  drawTile(47, (c) => {
+    // Red quilt
+    c.fillStyle = '#a61c1c';
+    c.fillRect(0, 0, 16, 16);
+    c.fillStyle = '#be2525';
+    c.fillRect(1, 5, 14, 10);
+    // White pillow at head
+    c.fillStyle = '#ffffff';
+    c.fillRect(2, 1, 12, 4);
+    c.fillStyle = '#dcdcdc';
+    c.strokeRect(2.5, 1.5, 11, 3);
+  });
+
+  // 48: Bed Side (Oak wood base and red mattress)
+  drawTile(48, (c) => {
+    // Oak wood legs & bottom rail
+    c.fillStyle = '#6b4f2c';
+    c.fillRect(0, 9, 16, 7);
+    c.fillRect(0, 5, 3, 11);
+    c.fillRect(13, 5, 3, 11);
+    // Mattress and red blanket
+    c.fillStyle = '#ffffff';
+    c.fillRect(0, 5, 4, 4);
+    c.fillStyle = '#a61c1c';
+    c.fillRect(4, 5, 12, 4);
+  });
+
+  // 49: Mossy Cobblestone
+  drawTile(49, (c) => {
+    // Cobblestone base
+    const rng = createRng(149);
+    for (let y = 0; y < 16; y++) {
+      for (let x = 0; x < 16; x++) {
+        const r = rng();
+        const base = Math.floor(105 + r * 35);
+        c.fillStyle = `rgb(${base},${base},${base})`;
+        c.fillRect(x, y, 1, 1);
+      }
+    }
+    // Moss patches
+    c.fillStyle = '#4e7a2b';
+    const moss = [
+      [2, 3, 3, 2], [7, 8, 4, 3], [1, 11, 3, 3], [11, 2, 3, 3], [10, 12, 4, 2]
+    ];
+    for (const [mx, my, mw, mh] of moss) {
+      c.fillRect(mx, my, mw, mh);
+    }
+  });
+
+  // 50: Lit Furnace Front (Stone with flaming fiery mouth)
+  drawTile(50, (c) => {
+    c.fillStyle = '#737373';
+    c.fillRect(0, 0, 16, 16);
+    // Furnace opening
+    c.fillStyle = '#1c1b19';
+    c.fillRect(3, 7, 10, 7);
+    // Fiery glow
+    c.fillStyle = '#ff6200';
+    c.fillRect(4, 9, 8, 5);
+    c.fillStyle = '#ffb300';
+    c.fillRect(5, 10, 6, 3);
+    c.fillStyle = '#fff575';
+    c.fillRect(6, 11, 4, 2);
+  });
+
   return canvas;
 }
 
@@ -691,15 +881,67 @@ export function getItemIcon(id: number): string {
 }
 
 function drawIsometricBlock(ctx: CanvasRenderingContext2D, blockId: number) {
+  // Flowers (Red/Yellow) - draw cute 2D sprite icon
+  if (blockId === 33) {
+    // Red Flower
+    ctx.fillStyle = '#4c8024';
+    ctx.fillRect(15, 14, 2, 14);
+    ctx.fillRect(11, 20, 4, 3);
+    ctx.fillStyle = '#d32626';
+    ctx.fillRect(10, 5, 12, 11);
+    ctx.fillStyle = '#ff4d4d';
+    ctx.fillRect(12, 7, 8, 7);
+    ctx.fillStyle = '#221111';
+    ctx.fillRect(14, 9, 4, 3);
+    return;
+  }
+  if (blockId === 34) {
+    // Yellow Flower
+    ctx.fillStyle = '#4c8024';
+    ctx.fillRect(15, 14, 2, 14);
+    ctx.fillStyle = '#f5c818';
+    ctx.fillRect(10, 6, 12, 10);
+    ctx.fillStyle = '#ffec42';
+    ctx.fillRect(12, 8, 8, 6);
+    return;
+  }
+
   // Draw mini 3D isometric cube
-  const atlas = generateAtlasCanvas();
-  // We can pick top, front, and side faces
-  // Simple isometric cube drawing
   const cx = 16;
   const cy = 16;
 
+  let topColor = '#888888';
+  let leftColor = '#666666';
+  let rightColor = '#555555';
+
+  if (blockId === 1) { // Grass
+    topColor = '#5b8c32'; leftColor = '#725137'; rightColor = '#5c3f2b';
+  } else if (blockId === 5) { // Oak
+    topColor = '#b8945f'; leftColor = '#6b5030'; rightColor = '#543d22';
+  } else if (blockId === 8) { // Sand
+    topColor = '#d8cd9d'; leftColor = '#c4b786'; rightColor = '#b0a370';
+  } else if (blockId === 14) { // Diamond
+    topColor = '#40e0d0'; leftColor = '#30b0a3'; rightColor = '#248a80';
+  } else if (blockId === 29) { // Sandstone
+    topColor = '#e2d7a8'; leftColor = '#cbbd88'; rightColor = '#b8aa75';
+  } else if (blockId === 30) { // Cactus
+    topColor = '#55822e'; leftColor = '#426922'; rightColor = '#36561b';
+  } else if (blockId === 31) { // Birch Log
+    topColor = '#e8e6e1'; leftColor = '#d5d2cc'; rightColor = '#c0bdb7';
+  } else if (blockId === 32) { // Ice
+    topColor = '#a8e0f8'; leftColor = '#85caea'; rightColor = '#6bb0d0';
+  } else if (blockId === 23) { // Snow
+    topColor = '#ffffff'; leftColor = '#e0e6ed'; rightColor = '#c8d2de';
+  } else if (blockId === 35) { // Bed
+    topColor = '#a61c1c'; leftColor = '#6b4f2c'; rightColor = '#ffffff';
+  } else if (blockId === 36) { // Mossy Cobble
+    topColor = '#5e7a4b'; leftColor = '#4a633a'; rightColor = '#3b502d';
+  } else if (blockId === 37) { // Furnace Lit
+    topColor = '#737373'; leftColor = '#ff6200'; rightColor = '#595959';
+  }
+
   // Face top
-  ctx.fillStyle = blockId === 1 ? '#5b8c32' : (blockId === 5 ? '#b8945f' : (blockId === 14 ? '#40e0d0' : (blockId === 8 ? '#d8cd9d' : '#888888')));
+  ctx.fillStyle = topColor;
   ctx.beginPath();
   ctx.moveTo(cx, cy - 12);
   ctx.lineTo(cx + 12, cy - 5);
@@ -711,7 +953,7 @@ function drawIsometricBlock(ctx: CanvasRenderingContext2D, blockId: number) {
   ctx.stroke();
 
   // Face left
-  ctx.fillStyle = blockId === 1 ? '#725137' : (blockId === 5 ? '#6b5030' : '#666666');
+  ctx.fillStyle = leftColor;
   ctx.beginPath();
   ctx.moveTo(cx - 12, cy - 5);
   ctx.lineTo(cx, cy + 2);
@@ -722,7 +964,7 @@ function drawIsometricBlock(ctx: CanvasRenderingContext2D, blockId: number) {
   ctx.stroke();
 
   // Face right
-  ctx.fillStyle = blockId === 1 ? '#5c3f2b' : (blockId === 5 ? '#543d22' : '#555555');
+  ctx.fillStyle = rightColor;
   ctx.beginPath();
   ctx.moveTo(cx, cy + 2);
   ctx.lineTo(cx + 12, cy - 5);
@@ -799,6 +1041,111 @@ function drawItemIcon(ctx: CanvasRenderingContext2D, itemId: number) {
     ctx.fill();
     ctx.fillStyle = '#558b2f';
     ctx.fillRect(8, 3, 2, 3); // stem
+    return;
+  }
+
+  if (itemId === 117) {
+    // Raw Porkchop (Pinkish-red meat with white rind)
+    ctx.fillStyle = '#eb7f86';
+    ctx.beginPath();
+    ctx.arc(8, 8, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fce4e4';
+    ctx.fillRect(5, 5, 2, 2);
+    return;
+  }
+
+  if (itemId === 118) {
+    // Cooked Porkchop (Golden-brown roasted steak)
+    ctx.fillStyle = '#8f4f2c';
+    ctx.beginPath();
+    ctx.arc(8, 8, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#bf7245';
+    ctx.fillRect(6, 6, 4, 3);
+    return;
+  }
+
+  if (itemId === 119) {
+    // Bow
+    ctx.strokeStyle = '#8b5a2b';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(7, 8, 6, -Math.PI / 2, Math.PI / 2);
+    ctx.stroke();
+    // Bowstring
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(7, 2);
+    ctx.lineTo(7, 14);
+    ctx.stroke();
+    return;
+  }
+
+  if (itemId === 120) {
+    // Arrow
+    ctx.strokeStyle = '#8b5a2b';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(3, 13);
+    ctx.lineTo(12, 4);
+    ctx.stroke();
+    // Tip
+    ctx.fillStyle = '#737373';
+    ctx.fillRect(11, 3, 3, 3);
+    // Feathers
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(2, 12, 2, 2);
+    return;
+  }
+
+  if (itemId === 121) {
+    // Iron Helmet
+    ctx.fillStyle = '#d0d0d0';
+    ctx.fillRect(4, 4, 8, 6);
+    ctx.clearRect(6, 7, 4, 3); // eye slit
+    ctx.strokeStyle = '#888';
+    ctx.strokeRect(4, 4, 8, 6);
+    return;
+  }
+
+  if (itemId === 122) {
+    // Iron Chestplate
+    ctx.fillStyle = '#d0d0d0';
+    ctx.fillRect(4, 4, 8, 8);
+    ctx.fillRect(2, 4, 3, 4); // shoulders
+    ctx.fillRect(11, 4, 3, 4);
+    ctx.strokeStyle = '#888';
+    ctx.strokeRect(4, 4, 8, 8);
+    return;
+  }
+
+  if (itemId === 123) {
+    // Iron Leggings
+    ctx.fillStyle = '#c5c5c5';
+    ctx.fillRect(4, 4, 8, 4); // waist
+    ctx.fillRect(4, 8, 3, 6); // left leg
+    ctx.fillRect(9, 8, 3, 6); // right leg
+    return;
+  }
+
+  if (itemId === 124) {
+    // Iron Boots
+    ctx.fillStyle = '#b8b8b8';
+    ctx.fillRect(3, 7, 4, 6); // left boot
+    ctx.fillRect(9, 7, 4, 6); // right boot
+    return;
+  }
+
+  if (itemId === 125) {
+    // Diamond Chestplate
+    ctx.fillStyle = '#40e0d0';
+    ctx.fillRect(4, 4, 8, 8);
+    ctx.fillRect(2, 4, 3, 4);
+    ctx.fillRect(11, 4, 3, 4);
+    ctx.strokeStyle = '#ffffff';
+    ctx.strokeRect(4, 4, 8, 8);
     return;
   }
 

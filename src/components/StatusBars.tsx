@@ -6,7 +6,7 @@ interface StatusBarsProps {
 }
 
 export const StatusBars: React.FC<StatusBarsProps> = ({ playerState }) => {
-  const { health, maxHealth, hunger, oxygen, inWater, gameMode } = playerState;
+  const { health, maxHealth, hunger, oxygen, defense, inWater, gameMode } = playerState;
 
   if (gameMode === 'creative') {
     return (
@@ -26,8 +26,40 @@ export const StatusBars: React.FC<StatusBarsProps> = ({ playerState }) => {
   const totalDrumsticks = 10;
   const hungerHalfPoints = Math.round(hunger); // 0 to 20
 
+  const defenseHalfPoints = Math.round(defense || 0);
+
   return (
-    <div className="flex flex-col items-center gap-1.5 pointer-events-none select-none">
+    <div className="flex flex-col items-center gap-1 pointer-events-none select-none">
+      {/* Armor Bar above hearts if wearing armor */}
+      {defenseHalfPoints > 0 && (
+        <div className="flex items-center justify-between w-[340px] px-1 mb-0.5">
+          <div className="flex items-center gap-0.5">
+            {Array.from({ length: 10 }).map((_, i) => {
+              const shieldValue = (i + 1) * 2;
+              const isFull = defenseHalfPoints >= shieldValue;
+              const isHalf = !isFull && defenseHalfPoints >= shieldValue - 1;
+
+              return (
+                <div key={i} className="relative w-4 h-4 flex items-center justify-center">
+                  <span className="text-neutral-800 text-[10px] select-none">🛡</span>
+                  {isFull && (
+                    <span className="absolute text-slate-200 text-[10px] select-none drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+                      🛡
+                    </span>
+                  )}
+                  {isHalf && (
+                    <span className="absolute text-slate-300 text-[10px] select-none overflow-hidden w-2 left-0 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+                      🛡
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div />
+        </div>
+      )}
+
       {/* Underwater Oxygen Bubbles */}
       {inWater && (
         <div className="flex items-center gap-1 mb-1">

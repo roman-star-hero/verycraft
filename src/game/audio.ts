@@ -730,6 +730,107 @@ class AudioManager {
     osc.start(t);
     osc.stop(t + 0.65);
   }
+
+  // Bow shooting sound (twang)
+  playBowShoot() {
+    if (this.volume <= 0) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(320, t);
+    osc.frequency.exponentialRampToValueAtTime(120, t + 0.12);
+
+    gain.gain.setValueAtTime(0.35 * this.volume, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.16);
+  }
+
+  // Arrow hitting block or mob (sharp thud)
+  playArrowHit() {
+    if (this.volume <= 0) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(450, t);
+    osc.frequency.exponentialRampToValueAtTime(80, t + 0.08);
+
+    gain.gain.setValueAtTime(0.4 * this.volume, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.09);
+  }
+
+  // Furnace crackle / smelting sizzle
+  playSmelt() {
+    if (this.volume <= 0) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const noise = this.ctx.createBufferSource();
+    const buf = this.createNoiseBuffer(0.2);
+    if (!buf) return;
+    noise.buffer = buf;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(2400, t);
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.25 * this.volume, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    noise.start(t);
+  }
+
+  // Sleep peaceful morning chime
+  playSleep() {
+    if (this.volume <= 0) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+    notes.forEach((freq, idx) => {
+      const t = this.ctx!.currentTime + idx * 0.12;
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+
+      gain.gain.setValueAtTime(0.2 * this.volume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+      osc.connect(gain);
+      gain.connect(this.ctx!.destination);
+
+      osc.start(t);
+      osc.stop(t + 0.45);
+    });
+  }
 }
 
 export const soundManager = new AudioManager();

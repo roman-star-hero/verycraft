@@ -32,6 +32,15 @@ export const BLOCK_IDS = {
   BLUE_WOOL: 26,
   YELLOW_WOOL: 27,
   GREEN_WOOL: 28,
+  SANDSTONE: 29,
+  CACTUS: 30,
+  BIRCH_LOG: 31,
+  ICE: 32,
+  RED_FLOWER: 33,
+  YELLOW_FLOWER: 34,
+  BED: 35,
+  MOSSY_COBBLESTONE: 36,
+  FURNACE_LIT: 37,
 } as const;
 
 export const ITEM_IDS = {
@@ -51,6 +60,15 @@ export const ITEM_IDS = {
   GOLD_INGOT: 114,
   DIAMOND: 115,
   APPLE: 116,
+  RAW_PORKCHOP: 117,
+  COOKED_PORKCHOP: 118,
+  BOW: 119,
+  ARROW: 120,
+  IRON_HELMET: 121,
+  IRON_CHESTPLATE: 122,
+  IRON_LEGGINGS: 123,
+  IRON_BOOTS: 124,
+  DIAMOND_CHESTPLATE: 125,
 } as const;
 
 // Texture IDs map to index in texture atlas:
@@ -361,6 +379,90 @@ export const BLOCKS: Record<number, BlockDefinition> = {
     textureIndices: [38, 38, 38, 38, 38, 38],
     drops: { id: BLOCK_IDS.GREEN_WOOL, count: 1 },
   },
+  [BLOCK_IDS.SANDSTONE]: {
+    id: 29,
+    name: 'Sandstone',
+    nameRu: 'Песчаник',
+    hardness: 0.8,
+    sound: 'stone',
+    textureIndices: [39, 39, 40, 40, 40, 40],
+    drops: { id: BLOCK_IDS.SANDSTONE, count: 1 },
+  },
+  [BLOCK_IDS.CACTUS]: {
+    id: 30,
+    name: 'Cactus',
+    nameRu: 'Кактус',
+    hardness: 0.4,
+    sound: 'wool',
+    textureIndices: [41, 41, 42, 42, 42, 42],
+    drops: { id: BLOCK_IDS.CACTUS, count: 1 },
+  },
+  [BLOCK_IDS.BIRCH_LOG]: {
+    id: 31,
+    name: 'Birch Log',
+    nameRu: 'Берёзовое бревно',
+    hardness: 1.2,
+    sound: 'wood',
+    textureIndices: [6, 6, 43, 43, 43, 43],
+    drops: { id: BLOCK_IDS.BIRCH_LOG, count: 1 },
+  },
+  [BLOCK_IDS.ICE]: {
+    id: 32,
+    name: 'Ice',
+    nameRu: 'Лёд',
+    hardness: 0.5,
+    transparent: true,
+    sound: 'glass',
+    textureIndices: [44, 44, 44, 44, 44, 44],
+  },
+  [BLOCK_IDS.RED_FLOWER]: {
+    id: 33,
+    name: 'Poppy Flower',
+    nameRu: 'Красный цветок (Мак)',
+    hardness: 0.05,
+    transparent: true,
+    sound: 'grass',
+    textureIndices: [45, 45, 45, 45, 45, 45],
+    drops: { id: BLOCK_IDS.RED_FLOWER, count: 1 },
+  },
+  [BLOCK_IDS.YELLOW_FLOWER]: {
+    id: 34,
+    name: 'Dandelion Flower',
+    nameRu: 'Одуванчик',
+    hardness: 0.05,
+    transparent: true,
+    sound: 'grass',
+    textureIndices: [46, 46, 46, 46, 46, 46],
+    drops: { id: BLOCK_IDS.YELLOW_FLOWER, count: 1 },
+  },
+  [BLOCK_IDS.BED]: {
+    id: 35,
+    name: 'Bed',
+    nameRu: 'Кровать',
+    hardness: 0.3,
+    sound: 'wood',
+    textureIndices: [47, 8, 48, 48, 48, 48],
+    drops: { id: BLOCK_IDS.BED, count: 1 },
+  },
+  [BLOCK_IDS.MOSSY_COBBLESTONE]: {
+    id: 36,
+    name: 'Mossy Cobblestone',
+    nameRu: 'Замшелый булыжник',
+    hardness: 1.5,
+    sound: 'stone',
+    textureIndices: [49, 49, 49, 49, 49, 49],
+    drops: { id: BLOCK_IDS.MOSSY_COBBLESTONE, count: 1 },
+  },
+  [BLOCK_IDS.FURNACE_LIT]: {
+    id: 37,
+    name: 'Lit Furnace',
+    nameRu: 'Горящая печь',
+    hardness: 1.5,
+    sound: 'stone',
+    lightLevel: 14,
+    textureIndices: [21, 21, 50, 20, 20, 20],
+    drops: { id: BLOCK_IDS.FURNACE, count: 1 },
+  },
 };
 
 export interface ItemInfo {
@@ -371,10 +473,25 @@ export interface ItemInfo {
   damage?: number;
   miningSpeedMultiplier?: number;
   effectiveOn?: ('wood' | 'stone' | 'dirt' | 'sand')[];
+  armorDefense?: number;
+  armorSlot?: 'helmet' | 'chestplate' | 'leggings' | 'boots';
+  foodRestore?: number;
   icon: string; // canvas generated data uri
 }
 
-export const ITEMS: Record<number, { name: string; nameRu: string; isTool?: boolean; damage?: number; miningSpeed?: number }> = {
+export const ITEMS: Record<
+  number,
+  {
+    name: string;
+    nameRu: string;
+    isTool?: boolean;
+    damage?: number;
+    miningSpeed?: number;
+    armorDefense?: number;
+    armorSlot?: 'helmet' | 'chestplate' | 'leggings' | 'boots';
+    foodRestore?: number;
+  }
+> = {
   [ITEM_IDS.WOODEN_PICKAXE]: { name: 'Wooden Pickaxe', nameRu: 'Деревянная кирка', isTool: true, damage: 2, miningSpeed: 2 },
   [ITEM_IDS.STONE_PICKAXE]: { name: 'Stone Pickaxe', nameRu: 'Каменная кирка', isTool: true, damage: 3, miningSpeed: 4 },
   [ITEM_IDS.IRON_PICKAXE]: { name: 'Iron Pickaxe', nameRu: 'Железная кирка', isTool: true, damage: 4, miningSpeed: 6 },
@@ -390,7 +507,16 @@ export const ITEMS: Record<number, { name: string; nameRu: string; isTool?: bool
   [ITEM_IDS.IRON_INGOT]: { name: 'Iron Ingot', nameRu: 'Железный слиток' },
   [ITEM_IDS.GOLD_INGOT]: { name: 'Gold Ingot', nameRu: 'Золотой слиток' },
   [ITEM_IDS.DIAMOND]: { name: 'Diamond', nameRu: 'Алмаз' },
-  [ITEM_IDS.APPLE]: { name: 'Apple', nameRu: 'Яблоко' },
+  [ITEM_IDS.APPLE]: { name: 'Apple', nameRu: 'Яблоко', foodRestore: 4 },
+  [ITEM_IDS.RAW_PORKCHOP]: { name: 'Raw Porkchop', nameRu: 'Сырая свинина', foodRestore: 3 },
+  [ITEM_IDS.COOKED_PORKCHOP]: { name: 'Cooked Porkchop', nameRu: 'Жареная свинина', foodRestore: 8 },
+  [ITEM_IDS.BOW]: { name: 'Bow', nameRu: 'Лук', isTool: true, damage: 8 },
+  [ITEM_IDS.ARROW]: { name: 'Arrow', nameRu: 'Стрела', damage: 4 },
+  [ITEM_IDS.IRON_HELMET]: { name: 'Iron Helmet', nameRu: 'Железный шлем', armorDefense: 2, armorSlot: 'helmet' },
+  [ITEM_IDS.IRON_CHESTPLATE]: { name: 'Iron Chestplate', nameRu: 'Железный нагрудник', armorDefense: 6, armorSlot: 'chestplate' },
+  [ITEM_IDS.IRON_LEGGINGS]: { name: 'Iron Leggings', nameRu: 'Железные поножи', armorDefense: 5, armorSlot: 'leggings' },
+  [ITEM_IDS.IRON_BOOTS]: { name: 'Iron Boots', nameRu: 'Железные ботинки', armorDefense: 2, armorSlot: 'boots' },
+  [ITEM_IDS.DIAMOND_CHESTPLATE]: { name: 'Diamond Chestplate', nameRu: 'Алмазный нагрудник', armorDefense: 8, armorSlot: 'chestplate' },
 };
 
 export function getItemOrBlockName(id: number, lang: 'ru' | 'en' = 'ru'): string {

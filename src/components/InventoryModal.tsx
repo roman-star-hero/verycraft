@@ -10,7 +10,9 @@ interface InventoryModalProps {
   onClose: () => void;
   inventory: InventorySlots; // 27 slots
   hotbar: InventorySlots; // 9 slots
+  armorSlots: (ItemStack | null)[]; // [helmet, chestplate, leggings, boots]
   onUpdateInventory: (newInv: InventorySlots, newHotbar: InventorySlots) => void;
+  onUpdateArmor: (newArmor: (ItemStack | null)[]) => void;
 }
 
 export const InventoryModal: React.FC<InventoryModalProps> = ({
@@ -18,7 +20,9 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
   onClose,
   inventory,
   hotbar,
+  armorSlots,
   onUpdateInventory,
+  onUpdateArmor,
 }) => {
   const [activeTab, setActiveTab] = useState<'survival' | 'creative' | 'recipes'>('survival');
 
@@ -29,6 +33,42 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
   // Creative search filter
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'nature' | 'building' | 'ores' | 'tools'>('all');
+
+  const armorSlotTypes: ('helmet' | 'chestplate' | 'leggings' | 'boots')[] = [
+    'helmet',
+    'chestplate',
+    'leggings',
+    'boots',
+  ];
+  const armorSlotNames = ['Шлем', 'Нагрудник', 'Поножи', 'Ботинки'];
+
+  const totalDefense = armorSlots.reduce(
+    (sum, item) => sum + (item ? (ITEMS[item.id]?.armorDefense || 0) : 0),
+    0
+  );
+
+  const handleArmorSlotClick = (index: number) => {
+    soundManager.playItemPickup();
+    const targetSlot = armorSlotTypes[index];
+    const current = armorSlots[index];
+
+    if (!cursorItem) {
+      if (current) {
+        setCursorItem(current);
+        const nextArmor = [...armorSlots];
+        nextArmor[index] = null;
+        onUpdateArmor(nextArmor);
+      }
+    } else {
+      const itemInfo = ITEMS[cursorItem.id];
+      if (itemInfo && itemInfo.armorSlot === targetSlot) {
+        const nextArmor = [...armorSlots];
+        nextArmor[index] = cursorItem;
+        setCursorItem(current);
+        onUpdateArmor(nextArmor);
+      }
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -262,19 +302,47 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
           <div>
             {/* Top Row: Player Avatar Preview & 2x2 Crafting */}
             <div className="flex items-start justify-between bg-[#adadad] p-3 border-2 border-[#555] mb-4">
-              {/* Player Avatar */}
+              {/* Player Avatar & Armor Slots */}
               <div className="flex items-center gap-3">
-                <div className="w-18 h-26 bg-[#666] border-2 border-[#333] flex flex-col items-center justify-center p-1">
-                  <div className="w-8 h-8 bg-[#c58e63] border border-black mb-1" /> {/* Head */}
-                  <div className="w-10 h-10 bg-[#00a8a8] border border-black mb-0.5" /> {/* Torso */}
+                {/* 4 Armor Slots */}
+                <div className="flex flex-col gap-1">
+                  {armorSlotTypes.map((type, i) => {
+                    const item = armorSlots[i];
+                    return (
+                      <div
+                        key={type}
+                        onClick={() => handleArmorSlotClick(i)}
+                        className="w-8 h-8 mc-slot flex items-center justify-center cursor-pointer hover:border-yellow-300 relative"
+                        title={armorSlotNames[i]}
+                      >
+                        {item ? (
+                          <img src={getItemIcon(item.id)} alt={type} className="w-6 h-6 pixelated" />
+                        ) : (
+                          <span className="font-mc text-[9px] text-neutral-500">
+                            {i === 0 ? '⛑' : i === 1 ? '🛡' : i === 2 ? '👖' : '👢'}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Avatar Preview */}
+                <div className="w-16 h-26 bg-[#666] border-2 border-[#333] flex flex-col items-center justify-center p-1">
+                  <div className="w-7 h-7 bg-[#c58e63] border border-black mb-1" /> {/* Head */}
+                  <div className="w-9 h-9 bg-[#00a8a8] border border-black mb-0.5" /> {/* Torso */}
                   <div className="flex gap-0.5">
-                    <div className="w-4 h-6 bg-[#283593] border border-black" />
-                    <div className="w-4 h-6 bg-[#283593] border border-black" />
+                    <div className="w-3.5 h-5 bg-[#283593] border border-black" />
+                    <div className="w-3.5 h-5 bg-[#283593] border border-black" />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <span className="font-mc text-base font-bold text-neutral-800">Игрок (Steve)</span>
+                  <div className="flex items-center gap-1">
+                    <span className="font-pixel text-xs text-yellow-800 font-bold">Защита:</span>
+                    <span className="font-pixel text-xs text-emerald-800 font-bold">+{totalDefense} 🛡</span>
+                  </div>
                   <span className="font-mc text-xs text-neutral-600">Клик = взять/положить</span>
                   <span className="font-mc text-xs text-neutral-600">ПКМ = разделить стак</span>
                 </div>

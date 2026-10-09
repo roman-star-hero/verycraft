@@ -42,8 +42,19 @@ export interface PlayerState {
   maxHealth: number;
   hunger: number; // max 20 (10 drumsticks)
   oxygen: number; // max 20 (underwater)
+  defense: number; // 0 to 20 armor defense rating
   selectedSlot: number; // 0-8
   gameMode: GameMode;
+  isSleeping?: boolean;
+}
+
+export interface FurnaceData {
+  input: ItemStack | null;
+  fuel: ItemStack | null;
+  output: ItemStack | null;
+  burnTimeRemaining: number;
+  maxBurnTime: number;
+  smeltProgress: number; // 0.0 to 1.0 (smelting current item)
 }
 
 export interface RaycastHit {

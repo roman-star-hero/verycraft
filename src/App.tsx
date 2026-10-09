@@ -1053,6 +1053,14 @@ export default function App() {
         timeHours={skyHours}
         timeMinutes={skyMinutes}
         mobCount={mobCount}
+        biomeName={
+          engineRef.current
+            ? `${engineRef.current.world.getBiomeSample(playerSnapshot.x, playerSnapshot.z).biome.name} (${engineRef.current.world.getBiomeSample(playerSnapshot.x, playerSnapshot.z).biome.nameRu})`
+            : undefined
+        }
+        biomeColor={engineRef.current?.world.getBiomeSample(playerSnapshot.x, playerSnapshot.z).biome.color}
+        temperature={engineRef.current?.world.getBiomeSample(playerSnapshot.x, playerSnapshot.z).temperature}
+        moisture={engineRef.current?.world.getBiomeSample(playerSnapshot.x, playerSnapshot.z).moisture}
       />
 
       {/* Inventory & 2x2 Crafting Modal */}

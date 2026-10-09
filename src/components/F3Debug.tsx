@@ -8,6 +8,10 @@ interface F3DebugProps {
   timeHours: number;
   timeMinutes: number;
   mobCount: number;
+  biomeName?: string;
+  biomeColor?: string;
+  temperature?: number;
+  moisture?: number;
 }
 
 export const F3Debug: React.FC<F3DebugProps> = ({
@@ -17,6 +21,10 @@ export const F3Debug: React.FC<F3DebugProps> = ({
   timeHours,
   timeMinutes,
   mobCount,
+  biomeName,
+  biomeColor,
+  temperature,
+  moisture,
 }) => {
   if (!isVisible) return null;
 
@@ -36,12 +44,7 @@ export const F3Debug: React.FC<F3DebugProps> = ({
   const chunkX = Math.floor(x / 16);
   const chunkZ = Math.floor(z / 16);
 
-  // Biome estimation
-  let biome = 'Plains (Равнины)';
-  if (y >= 26) biome = 'Mountains (Горы / Снег)';
-  else if (y <= 11) biome = 'Beach / Shore (Побережье)';
-  else if ((Math.abs(blockX) + Math.abs(blockZ)) % 30 > 15) biome = 'Forest (Дубовый лес)';
-
+  const displayBiome = biomeName || 'Plains (Равнины)';
   const pad = (n: number) => n.toString().padStart(2, '0');
 
   return (
@@ -60,7 +63,14 @@ export const F3Debug: React.FC<F3DebugProps> = ({
         <p>
           Facing: <span className="text-amber-200">{facing}</span> (yaw: {deg.toFixed(1)}°, pitch: {((pitch * 180) / Math.PI).toFixed(1)}°)
         </p>
-        <p>Biome: <span className="text-green-300">{biome}</span></p>
+        <p>
+          Biome: <span style={{ color: biomeColor || '#86efac' }}>{displayBiome}</span>
+          {temperature !== undefined && (
+            <span className="text-neutral-400 text-[10px] ml-2">
+              (T: {temperature > 0 ? '+' : ''}{temperature.toFixed(2)}, H: {((moisture ?? 0) * 100).toFixed(0)}%)
+            </span>
+          )}
+        </p>
         <p>
           Time: <span className="text-cyan-300">{pad(timeHours)}:{pad(timeMinutes)}</span> · Mobs: {mobCount}
         </p>

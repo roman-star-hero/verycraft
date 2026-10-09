@@ -26,6 +26,8 @@ export class Player {
   public maxHealth: number = 20;
   public hunger: number = 20;
   public oxygen: number = 20;
+  public defense: number = 0; // 0 to 20 armor defense
+  public spawnPoint: THREE.Vector3 = new THREE.Vector3(8, 24, 8);
   public selectedSlot: number = 0;
   public gameMode: GameMode = 'creative'; // default creative for instant fun, toggleable
 
@@ -303,19 +305,26 @@ export class Player {
 
   takeDamage(amount: number, type: 'hit' | 'fall' | 'drown' | 'generic' = 'hit') {
     if (this.gameMode === 'creative') return;
-    this.health = Math.max(0, this.health - amount);
-    soundManager.playDamage(type, amount);
+    // Calculate armor defense reduction (each point absorbs 4% of damage, max 80%)
+    const absorption = Math.min(0.8, this.defense * 0.04);
+    const actualDamage = Math.max(1, Math.round(amount * (1 - absorption)));
+    this.health = Math.max(0, this.health - actualDamage);
+    soundManager.playDamage(type, actualDamage);
     if (this.health <= 0) {
-      // Respawn
+      // Respawn at bed spawn point
       this.respawn();
     }
+  }
+
+  setSpawnPoint(pos: THREE.Vector3) {
+    this.spawnPoint.copy(pos);
   }
 
   respawn() {
     this.health = 20;
     this.hunger = 20;
     this.oxygen = 20;
-    this.position.set(8, 24, 8);
+    this.position.copy(this.spawnPoint);
     this.velocity.set(0, 0, 0);
   }
 
@@ -346,6 +355,7 @@ export class Player {
       maxHealth: this.maxHealth,
       hunger: this.hunger,
       oxygen: this.oxygen,
+      defense: this.defense,
       selectedSlot: this.selectedSlot,
       gameMode: this.gameMode,
     };

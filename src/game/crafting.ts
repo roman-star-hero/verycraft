@@ -13,6 +13,135 @@ export const RECIPES: CraftingRecipe[] = [
     result: { id: BLOCK_IDS.OAK_PLANKS, count: 4, type: 'block' },
     shapeless: true,
   },
+  // 1 Birch Log -> 4 Oak Planks (shapeless)
+  {
+    id: 'birch_planks',
+    name: 'Planks from Birch',
+    nameRu: 'Доски из берёзы',
+    width: 1,
+    height: 1,
+    grid: [BLOCK_IDS.BIRCH_LOG],
+    result: { id: BLOCK_IDS.OAK_PLANKS, count: 4, type: 'block' },
+    shapeless: true,
+  },
+  // 4 Sand -> 1 Sandstone (2x2)
+  {
+    id: 'sandstone',
+    name: 'Sandstone',
+    nameRu: 'Песчаник',
+    width: 2,
+    height: 2,
+    grid: [
+      BLOCK_IDS.SAND, BLOCK_IDS.SAND,
+      BLOCK_IDS.SAND, BLOCK_IDS.SAND,
+    ],
+    result: { id: BLOCK_IDS.SANDSTONE, count: 1, type: 'block' },
+  },
+  // Bed (3 Wool + 3 Planks)
+  {
+    id: 'bed',
+    name: 'Bed',
+    nameRu: 'Кровать',
+    width: 3,
+    height: 2,
+    grid: [
+      BLOCK_IDS.RED_WOOL, BLOCK_IDS.RED_WOOL, BLOCK_IDS.RED_WOOL,
+      BLOCK_IDS.OAK_PLANKS, BLOCK_IDS.OAK_PLANKS, BLOCK_IDS.OAK_PLANKS,
+    ],
+    result: { id: BLOCK_IDS.BED, count: 1, type: 'block' },
+  },
+  // Bow (3 Sticks + 2 Wool/String)
+  {
+    id: 'bow',
+    name: 'Bow',
+    nameRu: 'Лук',
+    width: 3,
+    height: 3,
+    grid: [
+      null, ITEM_IDS.STICK, BLOCK_IDS.RED_WOOL,
+      ITEM_IDS.STICK, null, BLOCK_IDS.RED_WOOL,
+      null, ITEM_IDS.STICK, BLOCK_IDS.RED_WOOL,
+    ],
+    result: { id: ITEM_IDS.BOW, count: 1, type: 'tool' },
+  },
+  // Arrows (1 Stick + 1 Iron Ingot -> 4 Arrows)
+  {
+    id: 'arrows',
+    name: 'Arrows',
+    nameRu: 'Стрелы',
+    width: 1,
+    height: 2,
+    grid: [ITEM_IDS.IRON_INGOT, ITEM_IDS.STICK],
+    result: { id: ITEM_IDS.ARROW, count: 4, type: 'item' },
+  },
+  // Iron Helmet (5 Iron Ingots)
+  {
+    id: 'iron_helmet',
+    name: 'Iron Helmet',
+    nameRu: 'Железный шлем',
+    width: 3,
+    height: 2,
+    grid: [
+      ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT,
+      ITEM_IDS.IRON_INGOT, null, ITEM_IDS.IRON_INGOT,
+    ],
+    result: { id: ITEM_IDS.IRON_HELMET, count: 1, type: 'item' },
+  },
+  // Iron Chestplate (8 Iron Ingots)
+  {
+    id: 'iron_chestplate',
+    name: 'Iron Chestplate',
+    nameRu: 'Железный нагрудник',
+    width: 3,
+    height: 3,
+    grid: [
+      ITEM_IDS.IRON_INGOT, null, ITEM_IDS.IRON_INGOT,
+      ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT,
+      ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT,
+    ],
+    result: { id: ITEM_IDS.IRON_CHESTPLATE, count: 1, type: 'item' },
+  },
+  // Iron Leggings (7 Iron Ingots)
+  {
+    id: 'iron_leggings',
+    name: 'Iron Leggings',
+    nameRu: 'Железные поножи',
+    width: 3,
+    height: 3,
+    grid: [
+      ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT, ITEM_IDS.IRON_INGOT,
+      ITEM_IDS.IRON_INGOT, null, ITEM_IDS.IRON_INGOT,
+      ITEM_IDS.IRON_INGOT, null, ITEM_IDS.IRON_INGOT,
+    ],
+    result: { id: ITEM_IDS.IRON_LEGGINGS, count: 1, type: 'item' },
+  },
+  // Iron Boots (4 Iron Ingots)
+  {
+    id: 'iron_boots',
+    name: 'Iron Boots',
+    nameRu: 'Железные ботинки',
+    width: 3,
+    height: 2,
+    grid: [
+      ITEM_IDS.IRON_INGOT, null, ITEM_IDS.IRON_INGOT,
+      ITEM_IDS.IRON_INGOT, null, ITEM_IDS.IRON_INGOT,
+    ],
+    result: { id: ITEM_IDS.IRON_BOOTS, count: 1, type: 'item' },
+  },
+  // Diamond Chestplate (8 Diamonds)
+  {
+    id: 'diamond_chestplate',
+    name: 'Diamond Chestplate',
+    nameRu: 'Алмазный нагрудник',
+    width: 3,
+    height: 3,
+    grid: [
+      ITEM_IDS.DIAMOND, null, ITEM_IDS.DIAMOND,
+      ITEM_IDS.DIAMOND, ITEM_IDS.DIAMOND, ITEM_IDS.DIAMOND,
+      ITEM_IDS.DIAMOND, ITEM_IDS.DIAMOND, ITEM_IDS.DIAMOND,
+    ],
+    result: { id: ITEM_IDS.DIAMOND_CHESTPLATE, count: 1, type: 'item' },
+  },
   // 2 Planks -> 4 Sticks
   {
     id: 'sticks',
