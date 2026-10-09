@@ -1,0 +1,6 @@
+{
+  "name": "CraftVoxel - 3D Minecraft Clone",
+  "description": "Полноценный 3D воксельный аналог Minecraft в браузере: добыча ресурсов, строительство, крафт, мобы, генерация мира и день/ночь.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

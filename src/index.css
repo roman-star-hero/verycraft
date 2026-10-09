@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    overflow: hidden;
+    background-color: #000;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.font-mc {
+  font-family: 'VT323', monospace;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Minecraft UI 3D Bevel Borders */
+.mc-slot {
+  background-color: #8b8b8b;
+  border-top: 2px solid #373737;
+  border-left: 2px solid #373737;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.mc-slot.active {
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px #000;
+}
+
+.mc-button {
+  background-color: #727272;
+  border-top: 2px solid #aaaaaa;
+  border-left: 2px solid #aaaaaa;
+  border-right: 2px solid #222222;
+  border-bottom: 2px solid #222222;
+  color: #e0e0e0;
+  text-shadow: 2px 2px 0px #1f1f1f;
+}
+
+.mc-button:hover:not(:disabled) {
+  background-color: #8a8a8a;
+  border-top: 2px solid #c0c0c0;
+  border-left: 2px solid #c0c0c0;
+  border-right: 2px solid #111111;
+  border-bottom: 2px solid #111111;
+  color: #ffffff;
+}
+
+.mc-button:active:not(:disabled) {
+  border-top: 2px solid #222222;
+  border-left: 2px solid #222222;
+  border-right: 2px solid #aaaaaa;
+  border-bottom: 2px solid #aaaaaa;
+}
+
+.mc-panel {
+  background-color: #c6c6c6;
+  border-top: 3px solid #ffffff;
+  border-left: 3px solid #ffffff;
+  border-right: 3px solid #555555;
+  border-bottom: 3px solid #555555;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+}
