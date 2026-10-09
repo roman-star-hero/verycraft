@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GameMode, WorldSettings } from '../game/types.ts';
 import { soundManager } from '../game/audio.ts';
+import { musicEngine } from '../game/music.ts';
 
 interface PauseMenuProps {
   isOpen: boolean;
@@ -152,6 +153,47 @@ export const PauseMenu: React.FC<PauseMenuProps> = ({
                   const vol = parseFloat(e.target.value);
                   soundManager.setVolume(vol);
                   onUpdateSettings({ ...settings, soundVolume: vol });
+                }}
+                className="w-full cursor-pointer"
+              />
+            </div>
+
+            {/* Music Volume & Toggle */}
+            <div className="flex flex-col gap-1.5 bg-[#a0a0a0] p-2 border border-[#666]">
+              <div className="flex justify-between items-center">
+                <span>Фоновая музыка:</span>
+                <button
+                  onClick={() => {
+                    const nextEnabled = !settings.musicEnabled;
+                    if (nextEnabled) {
+                      musicEngine.setVolume(settings.musicVolume);
+                      musicEngine.start();
+                    } else {
+                      musicEngine.stop();
+                    }
+                    onUpdateSettings({ ...settings, musicEnabled: nextEnabled });
+                  }}
+                  className={`px-2.5 py-0.5 text-xs font-bold rounded-xs cursor-pointer ${
+                    settings.musicEnabled ? 'bg-emerald-600 text-white' : 'bg-red-700 text-white'
+                  }`}
+                >
+                  {settings.musicEnabled ? 'ВКЛ' : 'ВЫКЛ'}
+                </button>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xs">Громкость музыки:</span>
+                <span className="text-xs font-bold">{Math.round(settings.musicVolume * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={settings.musicVolume}
+                onChange={(e) => {
+                  const mVol = parseFloat(e.target.value);
+                  musicEngine.setVolume(mVol);
+                  onUpdateSettings({ ...settings, musicVolume: mVol });
                 }}
                 className="w-full cursor-pointer"
               />

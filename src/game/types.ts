@@ -34,6 +34,7 @@ export interface PlayerState {
   vz: number;
   onGround: boolean;
   inWater: boolean;
+  isHeadUnderwater: boolean;
   isFlying: boolean;
   isSprinting: boolean;
   isSneaking: boolean;
@@ -75,6 +76,8 @@ export interface WorldSettings {
   fov: number; // default 75
   mouseSensitivity: number; // default 1.0
   soundVolume: number; // 0 to 1
+  musicVolume: number; // 0 to 1
+  musicEnabled: boolean;
   dayLengthMinutes: number; // e.g. 10 minutes
   timeSpeed: number; // multiplier 1x, 2x, 0 (freeze)
 }

@@ -66,7 +66,7 @@ export class SkyManager {
     this.scene.fog = new THREE.Fog(0x78a7ff, 35, 75);
   }
 
-  update(dt: number, playerPos: THREE.Vector3) {
+  update(dt: number, playerPos: THREE.Vector3, isUnderwater: boolean = false) {
     if (!this.isTimeFrozen) {
       // 1 day cycle = 600 seconds (10 min) at 1x
       this.timeOfDay = (this.timeOfDay + (dt / 600) * this.timeSpeed) % 1.0;
@@ -93,6 +93,28 @@ export class SkyManager {
 
     this.moonMesh.position.set(moonX, moonY, moonZ);
     this.moonMesh.lookAt(playerPos);
+
+    if (isUnderwater) {
+      // Deep aquatic submerged view
+      const waterColor = new THREE.Color(0x0a3258);
+      this.scene.background = waterColor;
+      this.sunLight.intensity = 0.4;
+      this.ambientLight.intensity = 0.25;
+      (this.stars.material as THREE.PointsMaterial).opacity = 0;
+
+      if (this.scene.fog) {
+        this.scene.fog.color = waterColor;
+        (this.scene.fog as THREE.Fog).near = 1.0;
+        (this.scene.fog as THREE.Fog).far = 16.0;
+      }
+      return;
+    }
+
+    // Normal Atmospheric Sky
+    if (this.scene.fog) {
+      (this.scene.fog as THREE.Fog).near = 35;
+      (this.scene.fog as THREE.Fog).far = 75;
+    }
 
     // Sky colors interpolation:
     // Day (sunY > 20), Sunset/Sunrise (sunY between -20 and 20), Night (sunY < -20)

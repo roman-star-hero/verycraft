@@ -17,6 +17,7 @@ export class Player {
 
   public onGround: boolean = false;
   public inWater: boolean = false;
+  public isHeadUnderwater: boolean = false;
   public isFlying: boolean = false;
   public isSprinting: boolean = false;
   public isSneaking: boolean = false;
@@ -96,7 +97,16 @@ export class Player {
     // Check water at eye level & body level
     const headBlock = world.getBlock(Math.floor(this.position.x), Math.floor(this.position.y + this.eyeHeight), Math.floor(this.position.z));
     const feetBlock = world.getBlock(Math.floor(this.position.x), Math.floor(this.position.y + 0.1), Math.floor(this.position.z));
-    this.inWater = headBlock === BLOCK_IDS.WATER || feetBlock === BLOCK_IDS.WATER;
+    const wasHeadUnderwater = this.isHeadUnderwater;
+    this.isHeadUnderwater = headBlock === BLOCK_IDS.WATER;
+    this.inWater = this.isHeadUnderwater || feetBlock === BLOCK_IDS.WATER;
+
+    // Splash sound on entering and exiting water
+    if (!wasHeadUnderwater && this.isHeadUnderwater) {
+      soundManager.playSplash();
+    } else if (wasHeadUnderwater && !this.isHeadUnderwater) {
+      soundManager.playSplash();
+    }
 
     // Underwater oxygen logic
     if (headBlock === BLOCK_IDS.WATER) {
@@ -328,6 +338,7 @@ export class Player {
       vz: this.velocity.z,
       onGround: this.onGround,
       inWater: this.inWater,
+      isHeadUnderwater: this.isHeadUnderwater,
       isFlying: this.isFlying,
       isSprinting: this.isSprinting,
       isSneaking: this.isSneaking,

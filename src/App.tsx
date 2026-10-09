@@ -8,6 +8,7 @@ import { ParticleSystem, PrimedTNT } from './game/particles.ts';
 import { BlockHighlight } from './game/highlight.ts';
 import { BLOCK_IDS, BLOCKS, ITEMS, ITEM_IDS } from './game/blocks.ts';
 import { soundManager } from './game/audio.ts';
+import { musicEngine } from './game/music.ts';
 import { GameMode, InventorySlots, ItemStack, PlayerState, WorldSettings } from './game/types.ts';
 
 // UI Components
@@ -21,6 +22,7 @@ import { ChestModal } from './components/ChestModal.tsx';
 import { PauseMenu } from './components/PauseMenu.tsx';
 import { F3Debug } from './components/F3Debug.tsx';
 import { HelpControls } from './components/HelpControls.tsx';
+import { UnderwaterOverlay } from './components/UnderwaterOverlay.tsx';
 
 const DEFAULT_SETTINGS: WorldSettings = {
   name: 'Мой мир (My World)',
@@ -30,6 +32,8 @@ const DEFAULT_SETTINGS: WorldSettings = {
   fov: 75,
   mouseSensitivity: 1.0,
   soundVolume: 0.5,
+  musicVolume: 0.35,
+  musicEnabled: true,
   dayLengthMinutes: 10,
   timeSpeed: 1.0,
 };
@@ -81,6 +85,7 @@ export default function App() {
     vz: 0,
     onGround: true,
     inWater: false,
+    isHeadUnderwater: false,
     isFlying: false,
     isSprinting: false,
     isSneaking: false,
@@ -185,7 +190,24 @@ export default function App() {
     setIsCraftingTableOpen(false);
     setIsChestOpen(false);
     setIsHelpOpen(false);
-  }, []);
+
+    // Auto-start cheerful background music on first interaction
+    if (settings.musicEnabled && !musicEngine.isMusicPlaying()) {
+      musicEngine.setVolume(settings.musicVolume);
+      musicEngine.start();
+    }
+  }, [settings.musicEnabled, settings.musicVolume]);
+
+  const handleToggleMusic = useCallback(() => {
+    const nextEnabled = !settings.musicEnabled;
+    setSettings((prev) => ({ ...prev, musicEnabled: nextEnabled }));
+    if (nextEnabled) {
+      musicEngine.setVolume(settings.musicVolume);
+      musicEngine.start();
+    } else {
+      musicEngine.stop();
+    }
+  }, [settings.musicEnabled, settings.musicVolume]);
 
   // Initialize Three.js Game Engine
   useEffect(() => {
@@ -380,8 +402,8 @@ export default function App() {
           }
         }
 
-        // Sky and day/night
-        eng.sky.update(dt, eng.player.position);
+        // Sky and day/night (with underwater effect)
+        eng.sky.update(dt, eng.player.position, eng.player.isHeadUnderwater);
         const skyState = eng.sky.getSkyState();
         setSkyHours(skyState.hours);
         setSkyMinutes(skyState.minutes);
@@ -695,6 +717,12 @@ export default function App() {
         return;
       }
 
+      // Toggle Music
+      if (e.code === 'KeyM') {
+        handleToggleMusic();
+        return;
+      }
+
       // Toggle Pause
       if (e.code === 'Escape') {
         if (isHelpOpen) {
@@ -917,8 +945,27 @@ export default function App() {
       {/* Crosshair in center */}
       <Crosshair />
 
+      {/* Underwater Tint, Caustics, and Bubble Overlay */}
+      <UnderwaterOverlay
+        isUnderwater={playerSnapshot.isHeadUnderwater}
+        oxygen={playerSnapshot.oxygen}
+      />
+
       {/* Top right quick shortcuts banner */}
       <div className="fixed top-3 right-3 z-30 flex items-center gap-2 font-pixel text-[10px] text-white/90 select-none">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleToggleMusic();
+          }}
+          className={`${
+            settings.musicEnabled ? 'bg-emerald-700 hover:bg-emerald-600 border-emerald-400' : 'bg-neutral-800 hover:bg-neutral-700 border-neutral-600'
+          } text-white px-2.5 py-1 border rounded-xs cursor-pointer shadow-md flex items-center gap-1 transition-colors`}
+          title="Включить / выключить весёлую музыку (клавиша M)"
+        >
+          <span>🎵</span>
+          <span>{settings.musicEnabled ? 'Музыка: ВКЛ' : 'Музыка: ВЫКЛ'}</span>
+        </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
