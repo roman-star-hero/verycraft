@@ -104,7 +104,7 @@ export class Player {
       if (this.oxygen <= 0) {
         this.drownTimer += delta;
         if (this.drownTimer >= 1.5) {
-          this.takeDamage(2);
+          this.takeDamage(2, 'drown');
           this.drownTimer = 0;
         }
       }
@@ -194,7 +194,9 @@ export class Player {
       if (this.keys.jump && this.onGround) {
         this.velocity.y = 8.8; // Classic Minecraft jump ~1.25 blocks
         this.onGround = false;
-        soundManager.playStepSound('dirt');
+        const blockBelow = world.getBlock(Math.floor(this.position.x), Math.floor(this.position.y - 0.2), Math.floor(this.position.z));
+        const soundType = this.inWater ? 'water' : (BLOCKS[blockBelow]?.sound || 'dirt');
+        soundManager.playJump(soundType);
       }
 
       // Track fall distance for damage
@@ -213,11 +215,19 @@ export class Player {
     if (this.checkCollision(world, testPosY)) {
       if (this.velocity.y < 0) {
         // Landed on ground
+        const blockBelow = world.getBlock(Math.floor(this.position.x), Math.floor(nextY - 0.1), Math.floor(this.position.z));
+        const soundType = this.inWater ? 'water' : (BLOCKS[blockBelow]?.sound || 'dirt');
+        const fallDistance = this.isFalling ? (this.fallStartHeight - this.position.y) : 0.5;
+
+        // Play landing impact sound
+        if (this.isFalling && fallDistance > 0.6) {
+          soundManager.playLand(soundType, fallDistance);
+        }
+
         if (this.isFalling && this.gameMode === 'survival') {
-          const fallDistance = this.fallStartHeight - this.position.y;
           if (fallDistance > 3.5) {
             const damage = Math.floor(fallDistance - 3);
-            this.takeDamage(damage);
+            this.takeDamage(damage, 'fall');
           }
         }
         this.isFalling = false;
@@ -254,19 +264,21 @@ export class Player {
       this.position.set(8, 28, 8);
       this.velocity.set(0, 0, 0);
       if (this.gameMode === 'survival') {
-        this.takeDamage(10);
+        this.takeDamage(10, 'hit');
       }
     }
 
-    // Footstep audio
+    // Footstep audio for different block types
     const horizontalSpeed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z);
     if (this.onGround && horizontalSpeed > 0.5) {
       this.lastFootstepDist += horizontalSpeed * delta;
-      if (this.lastFootstepDist >= (this.isSprinting ? 2.0 : 2.5)) {
+      const stepInterval = this.isSprinting ? 1.9 : (this.isSneaking ? 3.0 : 2.4);
+      if (this.lastFootstepDist >= stepInterval) {
         this.lastFootstepDist = 0;
         const blockBelow = world.getBlock(Math.floor(this.position.x), Math.floor(this.position.y - 0.2), Math.floor(this.position.z));
-        const soundType = BLOCKS[blockBelow]?.sound || 'dirt';
-        soundManager.playStepSound(soundType);
+        const soundType = this.inWater ? 'water' : (BLOCKS[blockBelow]?.sound || 'dirt');
+        const volumeScale = this.isSneaking ? 0.35 : (this.isSprinting ? 1.3 : 1.0);
+        soundManager.playStepSound(soundType, volumeScale);
       }
     }
 
@@ -279,10 +291,10 @@ export class Player {
     this.camera.quaternion.setFromEuler(euler);
   }
 
-  takeDamage(amount: number) {
+  takeDamage(amount: number, type: 'hit' | 'fall' | 'drown' | 'generic' = 'hit') {
     if (this.gameMode === 'creative') return;
     this.health = Math.max(0, this.health - amount);
-    soundManager.playHurt();
+    soundManager.playDamage(type, amount);
     if (this.health <= 0) {
       // Respawn
       this.respawn();

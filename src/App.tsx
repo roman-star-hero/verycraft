@@ -96,6 +96,7 @@ export default function App() {
   const [skyMinutes, setSkyMinutes] = useState<number>(0);
   const [mobCount, setMobCount] = useState<number>(0);
   const [isSwingingHand, setIsSwingingHand] = useState<boolean>(false);
+  const [targetedBlockId, setTargetedBlockId] = useState<number | null>(null);
 
   // References for Engine
   const engineRef = useRef<{
@@ -316,6 +317,8 @@ export default function App() {
           if (hit) {
             eng.targetBlockPos = new THREE.Vector3(hit.blockX, hit.blockY, hit.blockZ);
             eng.targetNormal = new THREE.Vector3(hit.normalX, hit.normalY, hit.normalZ);
+            const targetedBlock = eng.world.getBlock(hit.blockX, hit.blockY, hit.blockZ);
+            setTargetedBlockId(targetedBlock);
 
             // Progressive Mining update if holding left click
             if (eng.isLeftMouseDown) {
@@ -373,6 +376,7 @@ export default function App() {
             eng.targetNormal = null;
             eng.miningTime = 0;
             eng.highlight.update(null, 0);
+            setTargetedBlockId(null);
           }
         }
 
@@ -405,7 +409,7 @@ export default function App() {
           }
 
           mob.update(eng.world, dt, eng.player.position, (damage) => {
-            eng.player.takeDamage(damage);
+            eng.player.takeDamage(damage, 'hit');
           });
         }
         setMobCount(eng.mobs.length);
@@ -570,7 +574,7 @@ export default function App() {
               if (pDist < 6.0) {
                 const push = new THREE.Vector3().subVectors(eng.player.position, new THREE.Vector3(ex, ey, ez)).normalize();
                 eng.player.velocity.addScaledVector(push, (6.0 - pDist) * 3);
-                eng.player.takeDamage(Math.floor((6.0 - pDist) * 2));
+                eng.player.takeDamage(Math.floor((6.0 - pDist) * 2), 'hit');
               }
             });
             eng.tnts.push(primed);
@@ -675,6 +679,18 @@ export default function App() {
         } else if (!isPaused) {
           document.exitPointerLock?.();
           setIsInventoryOpen(true);
+        }
+        return;
+      }
+
+      // Toggle Help Controls
+      if (e.code === 'KeyH') {
+        if (isHelpOpen) {
+          setIsHelpOpen(false);
+          document.body.requestPointerLock();
+        } else if (!isPaused) {
+          document.exitPointerLock?.();
+          setIsHelpOpen(true);
         }
         return;
       }
@@ -865,14 +881,33 @@ export default function App() {
 
             <div className="w-full h-0.5 bg-[#888] my-1" />
 
-            <div className="space-y-1.5 text-xs font-pixel text-neutral-700 text-left">
-              <p>⛏ Добывайте руды и блоки</p>
-              <p>🧱 Стройте любые сооружения</p>
-              <p>🔨 Создавайте инструменты и предметы (E)</p>
-              <p>🐷 Встречайте свиней, овец и зомби</p>
+            <div className="space-y-2 text-xs font-pixel text-neutral-800 text-left bg-neutral-200/90 p-3.5 border-2 border-neutral-400 rounded-xs w-full">
+              <p className="text-amber-900 font-bold flex items-center gap-1.5">
+                <span>🧱</span> <span>КАК ПОСТАВИТЬ БЛОК:</span>
+              </p>
+              <p className="text-sm font-mc text-neutral-900 pl-4 leading-tight">
+                Выберите блок (клавиши <strong>1–9</strong>) ➔ наведите прицел ➔ нажмите <strong>ПКМ (правую кнопку мыши)</strong>.
+              </p>
+
+              <div className="w-full h-px bg-neutral-300 my-1" />
+
+              <p className="text-blue-900 font-bold flex items-center gap-1.5">
+                <span>⛏</span> <span>КАК ЛОМАТЬ:</span>
+              </p>
+              <p className="text-sm font-mc text-neutral-900 pl-4 leading-tight">
+                Наведите прицел и зажмите <strong>ЛКМ (левую кнопку мыши)</strong>.
+              </p>
+
+              <div className="w-full h-px bg-neutral-300 my-1" />
+
+              <p className="text-neutral-700 text-xs font-mc pt-0.5 flex items-center justify-between">
+                <span><strong>E</strong> — Инвентарь</span>
+                <span><strong>H</strong> — Полная справка</span>
+                <span><strong>2x Пробел</strong> — Полёт</span>
+              </p>
             </div>
 
-            <button className="mc-button px-8 py-3 font-mc text-xl font-bold text-white mt-4 w-full animate-pulse shadow-lg">
+            <button className="mc-button px-8 py-3 font-mc text-xl font-bold text-white mt-2 w-full animate-pulse shadow-lg">
               КЛИКНИТЕ ДЛЯ СТАРТА
             </button>
           </div>
@@ -883,20 +918,75 @@ export default function App() {
       <Crosshair />
 
       {/* Top right quick shortcuts banner */}
-      <div className="pointer-events-none fixed top-3 right-3 z-30 flex items-center gap-2 font-pixel text-[10px] text-white/80 select-none">
-        <span className="bg-black/60 px-2 py-1 border border-neutral-700/80 rounded-xs">
+      <div className="fixed top-3 right-3 z-30 flex items-center gap-2 font-pixel text-[10px] text-white/90 select-none">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            document.exitPointerLock?.();
+            setIsHelpOpen(true);
+          }}
+          className="bg-amber-600 hover:bg-amber-500 text-white px-2.5 py-1 border border-amber-300 rounded-xs cursor-pointer shadow-md flex items-center gap-1 transition-colors"
+          title="Открыть справку по управлению"
+        >
+          <span>❓</span>
+          <span>H: Справка</span>
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            document.exitPointerLock?.();
+            setIsInventoryOpen(true);
+          }}
+          className="bg-black/60 hover:bg-black/80 px-2 py-1 border border-neutral-700/80 rounded-xs cursor-pointer transition-colors"
+        >
           E: Инвентарь
-        </span>
-        <span className="bg-black/60 px-2 py-1 border border-neutral-700/80 rounded-xs">
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsF3Open((prev) => !prev);
+          }}
+          className="bg-black/60 hover:bg-black/80 px-2 py-1 border border-neutral-700/80 rounded-xs cursor-pointer transition-colors"
+        >
           F3: Инфо
-        </span>
-        <span className="bg-black/60 px-2 py-1 border border-neutral-700/80 rounded-xs">
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            document.exitPointerLock?.();
+            setIsPaused(true);
+          }}
+          className="bg-black/60 hover:bg-black/80 px-2 py-1 border border-neutral-700/80 rounded-xs cursor-pointer transition-colors"
+        >
           ESC: Пауза
-        </span>
+        </button>
       </div>
 
-      {/* Bottom HUD: Status Bars (Hearts, Hunger) & 9-Slot Hotbar */}
-      <div className="fixed bottom-4 left-0 right-0 z-20 flex flex-col items-center gap-2 pointer-events-none">
+      {/* Bottom HUD: Contextual Controls Prompt, Status Bars & 9-Slot Hotbar */}
+      <div className="fixed bottom-4 left-0 right-0 z-20 flex flex-col items-center gap-1.5 pointer-events-none">
+        {/* Contextual Action Prompt Bar */}
+        <div className="flex items-center gap-2.5 bg-black/80 px-3.5 py-1 rounded-sm border border-neutral-600/90 text-sm font-mc text-white shadow-xl pointer-events-none select-none backdrop-blur-xs">
+          <span className="text-emerald-400 font-bold">[ПКМ]</span>
+          <span>
+            {targetedBlockId === BLOCK_IDS.CRAFTING_TABLE
+              ? 'Открыть верстак'
+              : targetedBlockId === BLOCK_IDS.CHEST
+              ? 'Открыть сундук'
+              : targetedBlockId === BLOCK_IDS.TNT
+              ? 'Поджечь TNT'
+              : 'Поставить блок'}
+          </span>
+          <span className="text-neutral-500">·</span>
+          <span className="text-red-400 font-bold">[ЛКМ]</span>
+          <span>Ломать блок</span>
+          <span className="text-neutral-500">·</span>
+          <span className="text-amber-300 font-bold">[1-9]</span>
+          <span>Выбрать блок</span>
+          <span className="text-neutral-500">·</span>
+          <span className="text-yellow-300 font-bold">[H]</span>
+          <span>Справка</span>
+        </div>
+
         <div className="pointer-events-auto">
           <StatusBars playerState={playerSnapshot} />
         </div>

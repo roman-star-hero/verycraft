@@ -293,7 +293,7 @@ export const BLOCKS: Record<number, BlockDefinition> = {
     nameRu: 'Вода',
     hardness: 999999,
     transparent: true,
-    sound: 'sand',
+    sound: 'water',
     textureIndices: [28, 28, 28, 28, 28, 28],
   },
   [BLOCK_IDS.CHEST]: {
@@ -310,7 +310,7 @@ export const BLOCKS: Record<number, BlockDefinition> = {
     name: 'Snow Block',
     nameRu: 'Снег',
     hardness: 0.4,
-    sound: 'dirt',
+    sound: 'snow',
     textureIndices: [32, 2, 33, 33, 33, 33],
     drops: { id: BLOCK_IDS.SNOW, count: 1 },
   },

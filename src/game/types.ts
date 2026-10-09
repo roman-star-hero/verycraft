@@ -7,7 +7,7 @@ export interface BlockDefinition {
   hardness: number; // break time in seconds (0 = instant)
   transparent?: boolean;
   lightLevel?: number;
-  sound: 'grass' | 'dirt' | 'stone' | 'wood' | 'sand' | 'glass' | 'wool';
+  sound: 'grass' | 'dirt' | 'stone' | 'wood' | 'sand' | 'glass' | 'wool' | 'snow' | 'water' | 'metal';
   // Face texture atlas indices [top, bottom, front, back, left, right] or single index
   textureIndices: [number, number, number, number, number, number];
   drops?: { id: number; count: number };
